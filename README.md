@@ -2,7 +2,7 @@
 This project uses a Graph Neural Network (GNN) to treat molecules as graph structures rather than simple images or text strings.
 
 <img width="2880" height="1800" alt="ss-2026-01-08-02-40-00" src="https://github.com/user-attachments/assets/6995f260-1354-40f4-9c67-26fab54a3a9d" />
-Try it out yourself [here](https://soluble.rupan.dev)
+Try it out yourself: https://soluble.rupan.dev
 
 ### The Pipeline
 1. Input: A SMILES string (e.g., `CCO` for Ethanol).
