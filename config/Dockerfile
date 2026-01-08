@@ -10,8 +10,10 @@ RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/wh
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY src/ ./src/
+COPY static/ ./static/
+COPY models/ ./models/
 
 EXPOSE 8080
 
-CMD ["python", "app.py"]
+CMD ["python", "-m", "src.server"]

@@ -1,9 +1,12 @@
 services:
-  solubility-gnn:
-    build: .
+  solubility-api:
+    image: jeff7712/solubility-gnn:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: config/Dockerfile
     container_name: solubility-gnn
     ports:
       - "8080:8080"
+    volumes:
+      - ./models:/app/models
     restart: unless-stopped
-    environment:
-      - WORKERS=1

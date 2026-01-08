@@ -1,8 +1,8 @@
 import pandas as pd
 import torch
 from torch_geometric.loader import DataLoader
-from model import GNN
-from utils import smile_to_data
+from .model import GNN
+from .utils import smile_to_data
 
 EPOCHS = 100
 

@@ -1,6 +1,7 @@
 # GNN Solubility Predictor
-
 This project uses a Graph Neural Network (GNN) to treat molecules as graph structures rather than simple images or text strings.
+
+Try it out yourself **[here]**(https://soluble.rupan.dev)
 
 ### The Pipeline
 1. Input: A SMILES string (e.g., `CCO` for Ethanol).
@@ -34,3 +35,7 @@ Introduced four key optimizations to reduce error by ~65%:
     * Weight Decay (5e-4): Penalizes large weights in the optimizer to smooth the loss landscape.
 4.  Learning Rate Scheduler: Implemented 'ReduceLROnPlateau' to dynamically lower the learning rate when
 validation loss slows down. This allows the model to reach lower loss be more optimized.
+
+
+
+NOTE: Front end (static/) is mostly vibe coded as my main focus was on the model

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soluble</title>
+    <script src="https://3Dmol.org/build/3Dmol-min.js"></script>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="main-container">
+        <h1>GNN SOLUBILITY</h1>
+        
+        <div class="input-group">
+            <input type="text" id="smilesInput" value="CC(=O)Oc1ccccc1C(=O)O" placeholder="Enter SMILES string...">
+            <button id="analyzeBtn">→</button>
+        </div>
+
+        <div id="statusText">Ready</div>
+
+        <div id="viewer"></div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
