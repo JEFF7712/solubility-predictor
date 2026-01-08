@@ -1,0 +1,9 @@
+services:
+  solubility-gnn:
+    build: .
+    container_name: solubility-gnn
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    environment:
+      - WORKERS=1

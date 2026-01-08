@@ -27,6 +27,9 @@
         python312Packages.scikit-learn
         python312Packages.matplotlib
         python312Packages.rdkit
+        python312Packages.fastapi
+        python312Packages.uvicorn
+        python312Packages.pydantic
       ];
         
     };

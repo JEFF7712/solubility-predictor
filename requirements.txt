@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pydantic
+rdkit
+numpy
+pandas
+torch-geometric
+torch-scatter
+torch-sparse
