@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soluble</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M9 2h14v20c0 3.866-3.134 7-7 7s-7-3.134-7-7V2z' fill='none' stroke='%23f0f0f0' stroke-width='2'/%3E%3Crect x='12' y='22' width='8' height='4' rx='1' fill='%23f0f0f0'/%3E%3Ccircle cx='14' cy='18' r='1.5' fill='%23f0f0f0'/%3E%3Ccircle cx='18' cy='16' r='1.5' fill='%23f0f0f0'/%3E%3Ccircle cx='16' cy='12' r='1.5' fill='%23f0f0f0'/%3E%3C/svg%3E">
     <script src="https://3Dmol.org/build/3Dmol-min.js"></script>
     <link rel="stylesheet" href="/static/style.css">
 </head>
@@ -15,6 +16,10 @@
             <input type="text" id="smilesInput" value="CC(=O)Oc1ccccc1C(=O)O" placeholder="Enter SMILES string...">
             <button id="analyzeBtn">→</button>
         </div>
+
+        <a href="https://pubchem.ncbi.nlm.nih.gov/" target="_blank" class="helper-link">
+            Don't know the SMILES? Find it here ↗
+        </a>
 
         <div id="statusText">Ready</div>
 

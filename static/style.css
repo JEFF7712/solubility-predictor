@@ -82,3 +82,20 @@ button:hover {
     border-radius: 8px;
     position: relative;
 }
+
+.helper-link {
+    display: block;
+    margin-top: 8px;
+    margin-bottom: 25px;
+    font-size: 0.75rem;
+    color: #444;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: color 0.2s;
+}
+
+.helper-link:hover {
+    color: #888;
+    text-decoration: underline;
+}
