@@ -200,7 +200,7 @@ with torch.no_grad():
     for batch in test_loader:
         batch = batch.to(device)
         pred = model(batch)
-        test_loss += criterion(pred.squeeze(), batch.y).item()
+        test_loss += loss_fn(pred.squeeze(), batch.y).item()
 
 print(f"\nFinal Test MSE: {test_loss / len(test_loader):.4f}")
 print("Sample Prediction (Actual vs Pred):")
