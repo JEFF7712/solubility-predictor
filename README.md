@@ -1,7 +1,7 @@
 # GNN Solubility Predictor
 This project uses a Graph Neural Network (GNN) to treat molecules as graph structures rather than simple images or text strings.
 
-Try it out yourself **[here]**(https://soluble.rupan.dev)
+Try it out yourself [here](https://soluble.rupan.dev)
 
 ### The Pipeline
 1. Input: A SMILES string (e.g., `CCO` for Ethanol).
