@@ -1,4 +1,4 @@
-# GNN Solubility Predictor
+# Soluble: A GNN Solubility Predictor
 This project uses a Graph Neural Network (GNN) to treat molecules as graph structures rather than simple images or text strings.
 
 Try it out yourself [here](https://soluble.rupan.dev)
