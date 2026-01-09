@@ -44,7 +44,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 device = torch.device('cpu')
 model = GNN(hidden_dim=128)
 try:
-    model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
+    model.load_state_dict(torch.load(MODEL_PATH, map_location=device, weights_only=False))
     logger.info("Model loaded successfully")
 except FileNotFoundError:
     logger.error(f"Model file not found at {MODEL_PATH}")
@@ -75,8 +75,8 @@ def read_root():
     return FileResponse('static/index.html')
 
 @app.post("/predict")
-@limiter.limit("10/miuest: FastAPIRequest, reqnute")
-async def predict(req: Request):
+@limiter.limit("10/minute")
+async def predict(request: FastAPIRequest, req: Request):
     try:
         data = smile_to_data(req.smiles)
         if data is None:
