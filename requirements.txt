@@ -7,3 +7,4 @@ pandas
 torch-geometric
 torch-scatter
 torch-sparse
+slowapi

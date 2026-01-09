@@ -20,11 +20,23 @@ def get_atom_features(atom):
     elif hyb == Chem.HybridizationType.SP3: 
         hybridization[2] = 1
 
+    # Get aromaticity
+    aromatic = [1 if atom.GetIsAromatic() else 0]
+
+    # Get charge
+    charge = [atom.GetFormalCharge()]
+
+    # Get number of hydrogens
+    num_hydrogens = [atom.GetTotalNumHs()]
+
+    # Get degree
+    degree = [atom.GetDegree()]
+
     # Keep mass between 0 and 1 (most of the time)
     mass = [atom.GetMass() / 100.0]
 
     # Combine all features into a single list
-    return symbol_one_hot + hybridization + mass
+    return symbol_one_hot + hybridization + aromatic + charge + num_hydrogens + degree + mass
 
 def get_bond_features(bond):
     bt = bond.GetBondType()

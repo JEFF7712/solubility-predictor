@@ -1,10 +1,21 @@
 import pandas as pd
+import random
+import numpy as np
 import torch
 from torch_geometric.loader import DataLoader
 from .model import GNN
 from .utils import smile_to_data
 
 EPOCHS = 100
+SEED = 42
+
+# Set random seeds
+torch.manual_seed(SEED)
+torch.cuda.manual_seed_all(SEED)
+np.random.seed(SEED)
+random.seed(SEED)
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
 
 if __name__ == "__main__":
     # Load the Delaney solubility dataset

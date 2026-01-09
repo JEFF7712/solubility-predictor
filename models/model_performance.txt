@@ -7,10 +7,8 @@ Epoch 40 | Train Loss (MSE): 1.9019
 Epoch 50 | Train Loss (MSE): 1.3662
 
 Final Test MSE: 1.9883
-Sample Prediction (Actual vs Pred):
--1.62 vs -3.02
 
-AFTER:
+UPDATE 1:
 
 Tweaks:
 - Dropout
@@ -31,5 +29,25 @@ Epoch 90 | Loss: 0.9357 | LR: 0.000016
 Epoch 100 | Loss: 1.9900 | LR: 0.000010
 
 Final Test MSE: 0.8209
-Sample Prediction (Actual vs Pred):
--1.62 vs -2.02
+
+UPDATE 2:
+
+Tweaks:
+- Refactor the global pooling strategy to combine sum, mean, and max
+pooling.
+- Residual connections
+- Additional atom features (charge, isAromatic, num_hydrogens, degree)
+- Remove Dropout (not needed after further testing)
+
+Epoch 10 | Loss: 0.7194 | LR: 0.001000
+Epoch 20 | Loss: 0.8566 | LR: 0.001000
+Epoch 30 | Loss: 0.4795 | LR: 0.000500
+Epoch 40 | Loss: 0.4308 | LR: 0.000500
+Epoch 50 | Loss: 0.2412 | LR: 0.000250
+Epoch 60 | Loss: 0.3374 | LR: 0.000125
+Epoch 70 | Loss: 0.2644 | LR: 0.000031
+Epoch 80 | Loss: 0.2517 | LR: 0.000016
+Epoch 90 | Loss: 0.3248 | LR: 0.000010
+Epoch 100 | Loss: 0.6461 | LR: 0.000010
+
+Final Test MSE: 0.5071

@@ -15,7 +15,7 @@ Try it out yourself: https://soluble.rupan.dev
 Uses a GINEConv backbone, which is specifically designed to handle edge attributes (bond types) natively.
 - Input Layer: 12-dimensional Node Features + 4-dimensional Edge Features.
 - Hidden Layers: 3x GINEConv layers.
-- Global Pooling: global_mean_pool combines all atom vectors into a single molecule vector.
+- Global Pooling: global_sum_pool combines all atom vectors into a single molecule vector.
 - Prediction Head: A final MLP projects the molecular embedding to a scalar solubility value.
 
 ---
@@ -26,7 +26,7 @@ Uses a GINEConv backbone, which is specifically designed to handle edge attribut
 - Started with a shallow, single-layer GINE model.
 - Issue: The model treated atoms only based on immediate neighbors (1-hop). This results in it failing to capture global molecular geometry.
 
-### Updated model
+### Updated model 1
 Introduced four key optimizations to reduce error by ~65%:
 
 1. Increased Depth (1 → 3 Layers): Allows information to propagate 3 hops across the molecule, capturing long-range dependencies (e.g., how a polar group on one end affects the whole structure).
@@ -37,7 +37,16 @@ Introduced four key optimizations to reduce error by ~65%:
 4.  Learning Rate Scheduler: Implemented 'ReduceLROnPlateau' to dynamically lower the learning rate when
 validation loss slows down. This allows the model to reach lower loss be more optimized.
 
+### Updated model 2
+Introduced a few more optimizations to reduce error by a further ~34%:
+
+1. Hybrid Global Pooling: Refactored the readout phase to combine sum, mean, and max pooling outputs. This allows the model to capture size-dependent properties (sum), average molecular characteristics (mean), and dominant functional group features (max).
+2. Residual Skip Connections: Implemented residual connections (x = x + residual) between GNN layers to mitigates the vanishing gradient problem and prevent oversmoothing.
+3. Expanded Atom Featurization: Expanded input node features to include Formal Charge, Aromaticity, Number of Hydrogens, and Degree.
+4. Simplified Regularization: Removed Dropout layers from the architecture.
+
 ---
 ## Other Notes
 
-Known Atoms = ['C', 'N', 'O', 'F', 'S', 'Cl', 'Br', 'I'] (Elements that show up in the training data)
+- Known Atoms = ['C', 'N', 'O', 'F', 'S', 'Cl', 'Br', 'I']
+- Cannot distinguish between geometric isomers

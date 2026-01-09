@@ -32,6 +32,7 @@
         python312Packages.pydantic
         python312Packages.torch
         python312Packages.torch-geometric
+        python312Packages.slowapi
       ];
         
     };
