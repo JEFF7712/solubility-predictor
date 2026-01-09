@@ -46,12 +46,12 @@ Introduced a few more optimizations to reduce error by a further ~34%:
 4. Simplified Regularization: Removed Dropout layers from the architecture.
 
 ## Model eval metrics
-- MSE (Mean Squared Error): 0.5128
-- RMSE (Root Mean Squared Error): 0.7118
-- MAE (Mean Absolute Error): 0.4773
-- R² (Coefficient of Determination): 0.8764
-- Pearson Correlation: 0.9384 (p-value: 2.90e-106)
-- MAPE (Mean Absolute Percentage Error): 58.40%
+- MSE (Mean Squared Error): 0.5071
+- RMSE (Root Mean Squared Error): 0.7073
+- MAE (Mean Absolute Error): 0.4829
+- R² (Coefficient of Determination): 0.8780
+- Pearson Correlation: 0.9398 (p-value: 2.41e-107)
+- MAPE (Mean Absolute Percentage Error): 55.92%
 
 ---
 ## Other Notes
