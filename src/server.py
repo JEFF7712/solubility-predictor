@@ -1,8 +1,8 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request as FastAPIRequest
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 import torch
 from rdkit import Chem
 from rdkit.Chem import AllChem
@@ -58,7 +58,8 @@ model.eval()
 class Request(BaseModel):
     smiles: str
     
-    @validator('smiles')
+    @field_validator('smiles')
+    @classmethod
     def validate_smiles(cls, v):
         if len(v) > 500:
             raise ValueError("SMILES string too long (max 500 characters)")
@@ -74,7 +75,7 @@ def read_root():
     return FileResponse('static/index.html')
 
 @app.post("/predict")
-@limiter.limit("10/minute")
+@limiter.limit("10/miuest: FastAPIRequest, reqnute")
 async def predict(req: Request):
     try:
         data = smile_to_data(req.smiles)
