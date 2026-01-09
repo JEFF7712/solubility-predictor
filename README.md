@@ -50,21 +50,6 @@ Uses a **GINEConv** backbone with edge attribute support:
 
 ---
 
-### Featurization
-**Atom Features** (17-dim):
-- Symbol: 8-dim one-hot (C, N, O, F, S, Cl, Br, I)
-- Hybridization: 3-dim one-hot (SP, SP2, SP3)
-- Mass: Normalized
-- Formal Charge: [-2, 2]
-- Aromaticity
-- Hydrogen Count
-- Degree
-
-**Edge Features** (4-dim):
-- Bond type: 4-dim one-hot (Single, Double, Triple, Aromatic)
-
----
-
 ## Limitations
 
 - **Known Atoms Only**: Molecules outside [C, N, O, F, S, Cl, Br, I] are dropped.
@@ -78,4 +63,4 @@ Uses a **GINEConv** backbone with edge attribute support:
 
 - Random seed set to 42 for reproducibility across runs.
 - Supported atoms: C, N, O, F, S, Cl, Br, I.
-- Server runs on personal k8s homelab.
+- Website & Server runs on personal k8s homelab.
