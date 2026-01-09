@@ -30,6 +30,8 @@
         python312Packages.fastapi
         python312Packages.uvicorn
         python312Packages.pydantic
+        python312Packages.torch
+        python312Packages.torch-geometric
       ];
         
     };
