@@ -37,6 +37,7 @@ Introduced four key optimizations to reduce error by ~65%:
 4.  Learning Rate Scheduler: Implemented 'ReduceLROnPlateau' to dynamically lower the learning rate when
 validation loss slows down. This allows the model to reach lower loss be more optimized.
 
+---
+## Other Notes
 
-
-NOTE: Front end (static/) is mostly vibe coded as my main focus was on the model
+Known Atoms = ['C', 'N', 'O', 'F', 'S', 'Cl', 'Br', 'I']
