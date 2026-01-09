@@ -63,4 +63,4 @@ Uses a **GINEConv** backbone with edge attribute support:
 
 - Random seed set to 42 for reproducibility across runs.
 - Supported atoms: C, N, O, F, S, Cl, Br, I.
-- Website & Server runs on personal k8s homelab.
+- Website/Server runs on personal k8s homelab.
