@@ -34,7 +34,6 @@
         python312Packages.torch-geometric
         python312Packages.slowapi
       ];
-        
     };
   };
 }

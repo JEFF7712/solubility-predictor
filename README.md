@@ -1,5 +1,5 @@
 # Soluble: A GNN Solubility Predictor
-This project uses a Graph Neural Network (GNN) to treat molecules as graph structures rather than simple images or text strings.
+This project uses a Graph Neural Network (GNN) to treat molecules as graph structures and predict its solubility.
 
 <img width="2880" height="1800" alt="ss-2026-01-08-02-40-00" src="https://github.com/user-attachments/assets/6995f260-1354-40f4-9c67-26fab54a3a9d" />
 Try it out yourself: https://soluble.rupan.dev
@@ -54,6 +54,7 @@ Introduced a few more optimizations to reduce error by a further ~34%:
 - MAPE (Mean Absolute Percentage Error): 55.92%
 
 ---
+
 ## Other Notes
 
 - Known Atoms = ['C', 'N', 'O', 'F', 'S', 'Cl', 'Br', 'I']
