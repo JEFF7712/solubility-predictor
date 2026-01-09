@@ -30,7 +30,6 @@ async function predict() {
             viewer.clear();
             if (data.mol_block) {
                 viewer.addModel(data.mol_block, "mol");
-                // Style: Stick representation + slight sphere at atoms
                 viewer.setStyle({}, { stick: {radius: 0.15}, sphere: {scale: 0.2} });
                 viewer.zoomTo();
                 viewer.render();
@@ -58,5 +57,4 @@ document.getElementById('smilesInput').addEventListener('keypress', function (e)
     if (e.key === 'Enter') predict();
 });
 
-// Run once on load
 predict();
