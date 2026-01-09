@@ -40,4 +40,4 @@ validation loss slows down. This allows the model to reach lower loss be more op
 ---
 ## Other Notes
 
-Known Atoms = ['C', 'N', 'O', 'F', 'S', 'Cl', 'Br', 'I']
+Known Atoms = ['C', 'N', 'O', 'F', 'S', 'Cl', 'Br', 'I'] (Elements that show up in the training data)
