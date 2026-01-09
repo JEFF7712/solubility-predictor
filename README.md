@@ -45,6 +45,14 @@ Introduced a few more optimizations to reduce error by a further ~34%:
 3. Expanded Atom Featurization: Expanded input node features to include Formal Charge, Aromaticity, Number of Hydrogens, and Degree.
 4. Simplified Regularization: Removed Dropout layers from the architecture.
 
+## Model eval metrics
+MSE (Mean Squared Error): 0.5128
+RMSE (Root Mean Squared Error): 0.7118
+MAE (Mean Absolute Error): 0.4773
+R² (Coefficient of Determination): 0.8764
+Pearson Correlation: 0.9384 (p-value: 2.90e-106)
+MAPE (Mean Absolute Percentage Error): 58.40%
+
 ---
 ## Other Notes
 
