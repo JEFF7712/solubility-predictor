@@ -15,7 +15,6 @@ body {
     text-align: center;
     padding: 20px;
 }
-
 h1 {
     font-weight: 400;
     letter-spacing: 5px;
@@ -84,7 +83,7 @@ button:hover {
 }
 
 .helper-link {
-    display: block;
+    display: inline-block;
     margin-top: 8px;
     margin-bottom: 25px;
     font-size: 0.75rem;
@@ -98,4 +97,17 @@ button:hover {
 .helper-link:hover {
     color: #888;
     text-decoration: underline;
+}
+
+.github-icon {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    vertical-align: middle;
+    flex-shrink: 0;
+    transition: color 0.2s;
+}
+
+.helper-link:hover .github-icon {
+    color: #888;
 }

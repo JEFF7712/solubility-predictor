@@ -75,7 +75,7 @@ def read_root():
     return FileResponse('static/index.html')
 
 @app.post("/predict")
-@limiter.limit("10/minute")
+@limiter.limit("60/minute")
 async def predict(request: FastAPIRequest, req: Request):
     try:
         data = smile_to_data(req.smiles)
