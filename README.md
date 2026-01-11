@@ -48,7 +48,7 @@ Uses a **GINEConv** backbone with edge attribute support:
 
 ## Model Performance Metrics
 
-**5-Fold Cross-Validation** (Most Reliable):
+**5-Fold Cross-Validation** (Random Split):
 - **Average RMSE**: 0.5938 ± 0.0243
 - **Average R²**: 0.9187 (explains 91.87% of variance)
 - **Fold 1**: RMSE = 0.5668, R² = 0.9320
@@ -56,6 +56,15 @@ Uses a **GINEConv** backbone with edge attribute support:
 - **Fold 3**: RMSE = 0.6326, R² = 0.9035
 - **Fold 4**: RMSE = 0.5991, R² = 0.9186
 - **Fold 5**: RMSE = 0.6021, R² = 0.9145
+
+**5-Fold Scaffold Split Cross-Validation** (More Rigorous - Prevents Data Leakage):
+- **Average RMSE**: 0.7893 ± 0.0870
+- **Average R²**: 0.8253 (explains 82.53% of variance)
+- **Fold 1**: Train Size: 811 | Test Size: 317 → RMSE = 0.9137, R² = 0.7486
+- **Fold 2**: Train Size: 874 | Test Size: 254 → RMSE = 0.6436, R² = 0.8026
+- **Fold 3**: Train Size: 942 | Test Size: 186 → RMSE = 0.7744, R² = 0.8961
+- **Fold 4**: Train Size: 942 | Test Size: 186 → RMSE = 0.8177, R² = 0.8239
+- **Fold 5**: Train Size: 943 | Test Size: 185 → RMSE = 0.7970, R² = 0.8555
 
 ---
 
