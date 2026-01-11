@@ -57,8 +57,6 @@ Uses a **GINEConv** backbone with edge attribute support:
 - **Fold 4**: RMSE = 0.5991, R² = 0.9186
 - **Fold 5**: RMSE = 0.6021, R² = 0.9145
 
-✅ **Verdict**: Model is solid and generalizes consistently across different data splits.
-
 ---
 
 ## Limitations
