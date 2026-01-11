@@ -82,10 +82,16 @@ button:hover {
     position: relative;
 }
 
-.helper-link {
-    display: inline-block;
+.helper-links-row {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
     margin-top: 8px;
     margin-bottom: 25px;
+}
+
+.helper-link {
+    display: inline-block;
     font-size: 0.75rem;
     color: #444;
     text-decoration: none;

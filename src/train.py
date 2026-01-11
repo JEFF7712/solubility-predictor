@@ -36,7 +36,7 @@ if __name__ == "__main__":
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # Model
     model = GNN(hidden_dim=128).to(device)
-    # Optimizer - Force weights to be smaller to help with convergence
+    # Optimizer
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=5e-4)
     # Learning Rate Scheduler
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=5, min_lr=0.00001)

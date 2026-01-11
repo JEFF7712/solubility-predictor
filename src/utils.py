@@ -32,7 +32,7 @@ def get_atom_features(atom):
     # Get degree
     degree = [atom.GetDegree()]
 
-    # Keep mass between 0 and 1 (most of the time)
+    # Get mass and keep between 0 and 1
     mass = [atom.GetMass() / 100.0]
 
     # Combine all features into a single list
