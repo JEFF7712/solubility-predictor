@@ -106,12 +106,12 @@ button:hover {
 }
 
 .github-icon {
-    width: 16px !important;
-    height: 16px !important;
-    max-width: 16px !important;
-    max-height: 16px !important;
-    min-width: 16px !important;
-    min-height: 16px !important;
+    width: 14px !important;
+    height: 14px !important;
+    max-width: 14px !important;
+    max-height: 14px !important;
+    min-width: 14px !important;
+    min-height: 14px !important;
     display: inline-block;
     vertical-align: middle;
     flex-shrink: 0;

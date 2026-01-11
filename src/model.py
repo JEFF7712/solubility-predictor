@@ -11,24 +11,24 @@ class GNN(torch.nn.Module):
         self.edge_encoder = Linear(4, 16)
         mlp1 = Sequential(Linear(16, hidden_dim), ReLU(), Linear(hidden_dim, hidden_dim))
         self.conv1 = GINEConv(mlp1)
-        self.bn1 = BatchNorm1d(hidden_dim)
+        self.ln1 = nn.LayerNorm(hidden_dim)
         
         # GINE Layer 2
         self.edge_encoder2 = Linear(16, hidden_dim) 
         mlp2 = Sequential(Linear(hidden_dim, hidden_dim), ReLU(), Linear(hidden_dim, hidden_dim))
         self.conv2 = GINEConv(mlp2)
-        self.bn2 = BatchNorm1d(hidden_dim)
+        self.ln2 = nn.LayerNorm(hidden_dim)
 
         # GINE Layer 3
         self.edge_encoder3 = Linear(hidden_dim, hidden_dim)
         mlp3 = Sequential(Linear(hidden_dim, hidden_dim), ReLU(), Linear(hidden_dim, hidden_dim))
         self.conv3 = GINEConv(mlp3)
-        self.bn3 = BatchNorm1d(hidden_dim)
+        self.ln3 = nn.LayerNorm(hidden_dim)
 
         # Prediction Head
         self.final_mlp = nn.Sequential(
             nn.Linear(hidden_dim * 3, hidden_dim), 
-            nn.BatchNorm1d(hidden_dim),
+            nn.LayerNorm(hidden_dim),
             nn.ReLU(),
             nn.Linear(hidden_dim, 1)
         )
@@ -38,13 +38,13 @@ class GNN(torch.nn.Module):
         # Layer 1
         edge_attr_1 = self.edge_encoder(edge_attr)
         x = self.conv1(x, edge_index, edge_attr_1)
-        x = self.bn1(x)
+        x = self.ln1(x)
         x = x.relu()
         
         # Layer 2
         edge_attr_2 = self.edge_encoder2(edge_attr_1)
         x = self.conv2(x, edge_index, edge_attr_2)
-        x = self.bn2(x)
+        x = self.ln2(x)
         x = x.relu()
         x_residual = x
 
@@ -52,7 +52,7 @@ class GNN(torch.nn.Module):
         edge_attr_3 = self.edge_encoder3(edge_attr_2)
         x = self.conv3(x, edge_index, edge_attr_3)
         x = x + x_residual
-        x = self.bn3(x)
+        x = self.ln3(x)
         x = x.relu()
 
         # Global Pooling

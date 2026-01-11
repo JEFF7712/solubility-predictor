@@ -33,6 +33,7 @@
         python312Packages.torch
         python312Packages.torch-geometric
         python312Packages.slowapi
+        python312Packages.optuna
       ];
     };
   };

@@ -40,13 +40,24 @@ Uses a **GINEConv** backbone with edge attribute support:
 - **Test MSE**: 0.5071 (~38% improvement)
 - **Key changes**: Better feature engineering, skip connections reduce vanishing gradients.
 
-## Final Model Metrics
-- **MSE**: 0.5071
-- **RMSE**: 0.7073
-- **MAE**: 0.4829
-- **R²**: 0.8780 (explains 87.8% of variance)
-- **Pearson Correlation**: 0.9398 (p-value: 2.41e-107)
-- **MAPE**: 55.92%
+### Iteration 4: Normalization & Optimizer Optimization
+- Batch normalization → LayerNorm for better stability.
+- Adam Optimizer → AdamW with weight decay.
+- Refined training with validation set (70/15/15 split).
+- **Key changes**: Better normalization technique, improved optimizer, and proper train/val/test split for unbiased evaluation.
+
+## Model Performance Metrics
+
+**5-Fold Cross-Validation** (Most Reliable):
+- **Average RMSE**: 0.5938 ± 0.0243
+- **Average R²**: 0.9187 (explains 91.87% of variance)
+- **Fold 1**: RMSE = 0.5668, R² = 0.9320
+- **Fold 2**: RMSE = 0.5686, R² = 0.9251
+- **Fold 3**: RMSE = 0.6326, R² = 0.9035
+- **Fold 4**: RMSE = 0.5991, R² = 0.9186
+- **Fold 5**: RMSE = 0.6021, R² = 0.9145
+
+✅ **Verdict**: Model is solid and generalizes consistently across different data splits.
 
 ---
 
@@ -61,6 +72,5 @@ Uses a **GINEConv** backbone with edge attribute support:
 
 ## Other Notes
 
-- Random seed set to 42 for reproducibility across runs.
 - Supported atoms: C, N, O, F, S, Cl, Br, I.
-- Website/Server runs on personal k8s homelab.
+- Web/Server runs on my k8s homelab.

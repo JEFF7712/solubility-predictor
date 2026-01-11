@@ -1,4 +1,3 @@
 .direnv
 .venv
-src/evaluate.py
 src/__pycache__/
