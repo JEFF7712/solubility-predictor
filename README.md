@@ -44,6 +44,7 @@ Uses a **GINEConv** backbone with edge attribute support:
 - Batch normalization → LayerNorm for better stability.
 - Adam Optimizer → AdamW with weight decay.
 - Refined training with validation set (70/15/15 split).
+- **Test MSE**: 0.3197 (~37% improvement)
 - **Key changes**: Better normalization technique, improved optimizer, and proper train/val/test split for unbiased evaluation.
 
 ## Model Performance Metrics

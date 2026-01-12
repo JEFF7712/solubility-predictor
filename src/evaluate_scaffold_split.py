@@ -7,6 +7,7 @@ from src.utils import smile_to_data
 from rdkit import Chem
 from rdkit.Chem.Scaffolds import MurckoScaffold
 from sklearn.metrics import mean_squared_error, r2_score
+from scipy.stats import pearsonr
 from collections import defaultdict
 
 # Hyperparameters
@@ -128,8 +129,9 @@ if __name__ == "__main__":
         
         rmse = np.sqrt(mean_squared_error(actuals, preds))
         r2 = r2_score(actuals, preds)
+        pearson_corr, _ = pearsonr(actuals, preds)
         
-        print(f"Result: RMSE = {rmse:.4f} | R² = {r2:.4f}\n")
+        print(f"Result: RMSE = {rmse:.4f} | R² = {r2:.4f} | Pearson r = {pearson_corr:.4f}\n")
         rmse_scores.append(rmse)
         r2_scores.append(r2)
     
