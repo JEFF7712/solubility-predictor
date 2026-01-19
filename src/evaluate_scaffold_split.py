@@ -40,7 +40,7 @@ def scaffold_kfold_split(smiles_list, n_splits=5, seed=42):
         if scaffold is not None:
             scaffold_to_indices[scaffold].append(idx)
             
-    # Sort scaffolds by size to help balance the folds
+    # Sort scaffolds by size
     sorted_scaffolds = sorted(scaffold_to_indices.items(), 
                               key=lambda x: len(x[1]), reverse=True)
     
@@ -54,7 +54,6 @@ def scaffold_kfold_split(smiles_list, n_splits=5, seed=42):
         folds[smallest_fold_idx].extend(indices)
         fold_sizes[smallest_fold_idx] += len(indices)
         
-    # Convert to (Train, Test) tuples for each fold
     cv_splits = []
     for i in range(n_splits):
         test_indices = folds[i]

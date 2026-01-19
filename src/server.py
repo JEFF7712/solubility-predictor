@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODEL_PATH = os.path.join(BASE_DIR, "models", "gnn_solubility.pth")
+STATIC_DIR = os.path.join(BASE_DIR, "static")
 
 app = FastAPI(title="Solubility Predictor")
 
@@ -38,11 +39,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 # Load Model
 device = torch.device('cpu')
-model = GNN(hidden_dim=128)
+model = GNN(hidden_dim=160)
 try:
     model.load_state_dict(torch.load(MODEL_PATH, map_location=device, weights_only=False))
     logger.info("Model loaded successfully")
@@ -72,7 +73,7 @@ class Request(BaseModel):
 
 @app.get("/")
 def read_root():
-    return FileResponse('static/index.html')
+    return FileResponse(os.path.join(STATIC_DIR, 'index.html'))
 
 @app.post("/predict")
 @limiter.limit("60/minute")
