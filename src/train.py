@@ -35,7 +35,7 @@ def evaluate(model, loader, device, loss_fn):
 
 
 if __name__ == "__main__":
-    # Load the Delaney solubility dataset
+    # Load Delaney solubility dataset
     DATA_URL = "https://raw.githubusercontent.com/deepchem/deepchem/master/datasets/delaney-processed.csv"
     df = pd.read_csv(DATA_URL)
 
@@ -46,7 +46,7 @@ if __name__ == "__main__":
         if data is not None:
             data_list.append(data)
 
-    # Train/val/test split (70/15/15)
+    # Train/val/test split
     num_samples = len(data_list)
     train_size = int(0.7 * num_samples)
     val_size = int(0.15 * num_samples)
@@ -89,7 +89,7 @@ if __name__ == "__main__":
         if (epoch + 1) % 10 == 0:
             print(f"Epoch {epoch + 1} | Train: {train_loss:.4f} | Val: {val_loss:.4f} | LR: {current_lr:.6f}")
 
-    # Final eval on validation and test
+    # Final eval
     final_val = evaluate(model, val_loader, device, loss_fn)
     final_test = evaluate(model, test_loader, device, loss_fn)
     print(f"Validation Loss: {final_val:.4f} | Test Loss: {final_test:.4f}")

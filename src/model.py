@@ -56,7 +56,6 @@ class GNN(torch.nn.Module):
         x = x.relu()
 
         # Global Pooling
-        # Size and number of functional groups matter for solubility so use sum pooling
         x_sum = global_add_pool(x, batch)
         x_mean = global_mean_pool(x, batch)
         x_max = global_max_pool(x, batch)
