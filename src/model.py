@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from torch.nn import Sequential, Linear, ReLU, BatchNorm1d
+from torch.nn import Sequential, Linear, ReLU
 from torch_geometric.nn import GINEConv, global_add_pool, global_mean_pool, global_max_pool
 
 class GNN(torch.nn.Module):

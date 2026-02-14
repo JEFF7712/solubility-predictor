@@ -19,8 +19,6 @@ torch.manual_seed(SEED)
 torch.cuda.manual_seed_all(SEED)
 np.random.seed(SEED)
 random.seed(SEED)
-torch.backends.cudnn.deterministic = True
-torch.backends.cudnn.benchmark = False
 
 def evaluate(model, loader, device, loss_fn):
     model.eval()
@@ -76,7 +74,7 @@ if __name__ == "__main__":
             batch = batch.to(device)
             optimizer.zero_grad()
             out = model(batch)
-            loss = loss_fn(out.squeeze(), batch.y)
+            loss = loss_fn(out.view(-1), batch.y)
             loss.backward()
             optimizer.step()
             total_loss += loss.item()

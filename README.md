@@ -15,7 +15,7 @@ Try it out yourself: https://soluble.rupan.dev
 
 ## Model Architecture
 Uses a **GINEConv** backbone with edge attribute support:
-- **Input Layer**: 17-dimensional Node Features + 4-dimensional Edge Features.
+- **Input Layer**: 16-dimensional Node Features + 4-dimensional Edge Features.
 - **Hidden Layers**: 3× GINEConv layers with BatchNorm1d after each.
 - **Residual Connections**: Skip connection from layer 2 → layer 3 to improve gradient flow.
 - **Global Pooling**: Concatenates sum, mean, and max pooling to capture size-dependent and functional group features.
@@ -81,4 +81,4 @@ Uses a **GINEConv** backbone with edge attribute support:
 ## Other Notes
 
 - Supported atoms: C, N, O, F, S, Cl, Br, I.
-- Web/Server runs on my k8s homelab.
+- Web server runs on my k8s homelab.
