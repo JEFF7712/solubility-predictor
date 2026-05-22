@@ -1,14 +1,16 @@
 FROM python:3.10-slim
 
-RUN apt-get update && apt-get install -y libxrender1 libxext6 libgl1 build-essential && rm -rf /var/lib/apt/lists/*
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
 COPY requirements.txt .
 
-RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+RUN pip install --no-cache-dir torch==2.5.1+cpu --index-url https://download.pytorch.org/whl/cpu
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt \
+    -f https://data.pyg.org/whl/torch-2.5.1+cpu.html
 
 COPY src/ ./src/
 COPY static/ ./static/
