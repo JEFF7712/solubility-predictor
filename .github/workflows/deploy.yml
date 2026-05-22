@@ -8,7 +8,7 @@ env:
   IMAGE_NAME: jeff7712/solubility-gnn
 
 jobs:
-  push-latest:
+  build-and-push:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -23,12 +23,16 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Generate image tag
+        id: version
+        run: echo "tag=0.0.${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"
+
       - name: Build and Push
         uses: docker/build-push-action@v5
         with:
           context: .
           file: config/Dockerfile
           push: true
-          tags: ${{ env.IMAGE_NAME }}:latest
+          tags: ${{ env.IMAGE_NAME }}:${{ steps.version.outputs.tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
