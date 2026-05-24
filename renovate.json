@@ -5,6 +5,16 @@
   ],
   "packageRules": [
     {
+      "description": "Keep Docker runtime compatible with pinned PyTorch CPU wheels",
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "python"
+      ],
+      "allowedVersions": "<3.13"
+    },
+    {
       "description": "Automatically merge minor and patch updates",
       "matchUpdateTypes": [
         "minor",
