@@ -4,15 +4,6 @@ This project uses a Graph Neural Network (GNN) to treat molecules as graph struc
 <img width="2880" height="1800" alt="ss-2026-01-08-02-40-00" src="https://github.com/user-attachments/assets/6995f260-1354-40f4-9c67-26fab54a3a9d" />
 Try it out yourself: https://soluble.rupan.dev
 
-## The Pipeline
-1. **Input**: A SMILES string (e.g., `CCO` for Ethanol).
-2. **Graph Conversion** (RDKit):
-   - **Nodes (Atoms)**: Featurized by Atomic Symbol (one-hot), Hybridization (SP/SP2/SP3), Mass, Formal Charge, Aromaticity, Hydrogen Count, Degree.
-   - **Edges (Bonds)**: Connectivity + Bond Type Attributes (Single, Double, Triple, Aromatic).
-3. **Inference** (PyTorch Geometric): Graph passes through a 3-layer GINE architecture to predict Log Solubility.
-
----
-
 ## Model Architecture
 Uses a **GINEConv** backbone with edge attribute support:
 - **Input Layer**: 16-dimensional Node Features + 4-dimensional Edge Features.
@@ -66,15 +57,6 @@ Uses a **GINEConv** backbone with edge attribute support:
 - **Fold 3**: Train Size: 942 | Test Size: 186 → RMSE = 0.7744, R² = 0.8961
 - **Fold 4**: Train Size: 942 | Test Size: 186 → RMSE = 0.8177, R² = 0.8239
 - **Fold 5**: Train Size: 943 | Test Size: 185 → RMSE = 0.7970, R² = 0.8555
-
----
-
-## Limitations
-
-- **Known Atoms Only**: Molecules outside [C, N, O, F, S, Cl, Br, I] are dropped.
-- **No Stereochemistry**: Cannot distinguish between geometric isomers.
-- **Solubility Range**: Trained on log solubility ≈ -5 to +5; extrapolation outside this range unreliable.
-- **Dataset Bias**: Model inherits any biases from Delaney dataset.
 
 ---
 
