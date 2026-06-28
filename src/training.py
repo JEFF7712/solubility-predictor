@@ -14,9 +14,9 @@ from torch_geometric.loader import DataLoader
 from .config import (
     BATCH_SIZE,
     EPOCHS,
-    HIDDEN_DIM,
     LEARNING_RATE,
     WEIGHT_DECAY,
+    default_model_kwargs,
 )
 from .model import GNN
 
@@ -38,7 +38,7 @@ def train_single_model(
     val_set,
     device,
     *,
-    hidden_dim=HIDDEN_DIM,
+    model_kwargs=None,
     lr=LEARNING_RATE,
     weight_decay=WEIGHT_DECAY,
     epochs=EPOCHS,
@@ -53,7 +53,9 @@ def train_single_model(
     if seed is not None:
         torch.manual_seed(seed)
 
-    model = GNN(hidden_dim=hidden_dim).to(device)
+    if model_kwargs is None:
+        model_kwargs = default_model_kwargs()
+    model = GNN(**model_kwargs).to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, mode="min", factor=0.5, patience=5, min_lr=0.00001

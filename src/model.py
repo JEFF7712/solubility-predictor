@@ -1,66 +1,81 @@
 import torch
 import torch.nn as nn
-from torch.nn import Sequential, Linear, ReLU
-from torch_geometric.nn import GINEConv, global_add_pool, global_mean_pool, global_max_pool
+import torch.nn.functional as F
+from torch.nn import Linear, ReLU, Sequential
+from torch_geometric.nn import (
+    GINEConv,
+    global_add_pool,
+    global_max_pool,
+    global_mean_pool,
+)
+
+from .config import NUM_EDGE_FEATURES, NUM_NODE_FEATURES
+
 
 class GNN(torch.nn.Module):
-    def __init__(self, hidden_dim=64):
+    """GINEConv backbone with a configurable width/depth/dropout.
+
+    Node and edge features are projected to `hidden_dim` once, then passed
+    through `num_layers` residual GINEConv blocks (LayerNorm + ReLU + dropout).
+    Graph embeddings concatenate sum/mean/max pooling before the MLP head.
+    """
+
+    def __init__(
+        self,
+        hidden_dim=160,
+        num_layers=3,
+        dropout=0.0,
+        num_node_features=NUM_NODE_FEATURES,
+        num_edge_features=NUM_EDGE_FEATURES,
+    ):
         super().__init__()
-        
-        # GINE Layer 1
-        self.edge_encoder = Linear(4, 16)
-        mlp1 = Sequential(Linear(16, hidden_dim), ReLU(), Linear(hidden_dim, hidden_dim))
-        self.conv1 = GINEConv(mlp1)
-        self.ln1 = nn.LayerNorm(hidden_dim)
-        
-        # GINE Layer 2
-        self.edge_encoder2 = Linear(16, hidden_dim) 
-        mlp2 = Sequential(Linear(hidden_dim, hidden_dim), ReLU(), Linear(hidden_dim, hidden_dim))
-        self.conv2 = GINEConv(mlp2)
-        self.ln2 = nn.LayerNorm(hidden_dim)
+        self.dropout = dropout
 
-        # GINE Layer 3
-        self.edge_encoder3 = Linear(hidden_dim, hidden_dim)
-        mlp3 = Sequential(Linear(hidden_dim, hidden_dim), ReLU(), Linear(hidden_dim, hidden_dim))
-        self.conv3 = GINEConv(mlp3)
-        self.ln3 = nn.LayerNorm(hidden_dim)
+        self.node_encoder = Linear(num_node_features, hidden_dim)
+        self.edge_encoder = Linear(num_edge_features, hidden_dim)
 
-        # Prediction Head
+        self.convs = nn.ModuleList()
+        self.norms = nn.ModuleList()
+        for _ in range(num_layers):
+            mlp = Sequential(
+                Linear(hidden_dim, hidden_dim), ReLU(), Linear(hidden_dim, hidden_dim)
+            )
+            self.convs.append(GINEConv(mlp))
+            self.norms.append(nn.LayerNorm(hidden_dim))
+
         self.final_mlp = nn.Sequential(
-            nn.Linear(hidden_dim * 3, hidden_dim), 
+            nn.Linear(hidden_dim * 3, hidden_dim),
             nn.LayerNorm(hidden_dim),
             nn.ReLU(),
-            nn.Linear(hidden_dim, 1)
+            nn.Dropout(dropout),
+            nn.Linear(hidden_dim, 1),
         )
+
     def forward(self, data):
-        x, edge_index, edge_attr, batch = data.x, data.edge_index, data.edge_attr, data.batch
-        
-        # Layer 1
-        edge_attr_1 = self.edge_encoder(edge_attr)
-        x = self.conv1(x, edge_index, edge_attr_1)
-        x = self.ln1(x)
-        x = x.relu()
-        
-        # Layer 2
-        edge_attr_2 = self.edge_encoder2(edge_attr_1)
-        x = self.conv2(x, edge_index, edge_attr_2)
-        x = self.ln2(x)
-        x = x.relu()
-        x_residual = x
+        x, edge_index, edge_attr, batch = (
+            data.x,
+            data.edge_index,
+            data.edge_attr,
+            data.batch,
+        )
 
-        # Layer 3
-        edge_attr_3 = self.edge_encoder3(edge_attr_2)
-        x = self.conv3(x, edge_index, edge_attr_3)
-        x = x + x_residual
-        x = self.ln3(x)
-        x = x.relu()
+        x = self.node_encoder(x)
+        edge_attr = self.edge_encoder(edge_attr)
 
-        # Global Pooling
-        x_sum = global_add_pool(x, batch)
-        x_mean = global_mean_pool(x, batch)
-        x_max = global_max_pool(x, batch)
+        for conv, norm in zip(self.convs, self.norms):
+            x_residual = x
+            x = conv(x, edge_index, edge_attr)
+            x = norm(x)
+            x = F.relu(x)
+            x = F.dropout(x, p=self.dropout, training=self.training)
+            x = x + x_residual
 
-        x_graph = torch.cat([x_sum, x_mean, x_max], dim=1)
-
-        # Final Prediction
+        x_graph = torch.cat(
+            [
+                global_add_pool(x, batch),
+                global_mean_pool(x, batch),
+                global_max_pool(x, batch),
+            ],
+            dim=1,
+        )
         return self.final_mlp(x_graph)

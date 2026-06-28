@@ -9,7 +9,7 @@ reproducible.
 
 import torch
 
-from .config import ENSEMBLE_SIZE, HIDDEN_DIM, SEED
+from .config import ENSEMBLE_SIZE, SEED, default_model_kwargs
 from .model import GNN
 from .normalize import GraphStandardizer
 from .training import train_single_model
@@ -21,7 +21,7 @@ def train_ensemble(
     device,
     *,
     size=ENSEMBLE_SIZE,
-    hidden_dim=HIDDEN_DIM,
+    model_kwargs=None,
     base_seed=SEED,
     **train_kwargs,
 ):
@@ -29,13 +29,15 @@ def train_ensemble(
 
     Returns (states, val_losses).
     """
+    if model_kwargs is None:
+        model_kwargs = default_model_kwargs()
     states, val_losses = [], []
     for i in range(size):
         state, val = train_single_model(
             train_set,
             val_set,
             device,
-            hidden_dim=hidden_dim,
+            model_kwargs=model_kwargs,
             seed=base_seed + i,
             **train_kwargs,
         )
@@ -51,20 +53,22 @@ def fit_ensemble(
     device,
     *,
     size=ENSEMBLE_SIZE,
-    hidden_dim=HIDDEN_DIM,
+    model_kwargs=None,
     **train_kwargs,
 ):
     """Fit a standardizer on `train_data`, train an ensemble, and return
     (ready-to-predict models, scaler). Convenience wrapper for the CV scripts."""
+    if model_kwargs is None:
+        model_kwargs = default_model_kwargs()
     scaler = GraphStandardizer.fit(train_data)
     train_std = scaler.transform_dataset(train_data)
     val_std = scaler.transform_dataset(val_data)
     states, _ = train_ensemble(
-        train_std, val_std, device, size=size, hidden_dim=hidden_dim, **train_kwargs
+        train_std, val_std, device, size=size, model_kwargs=model_kwargs, **train_kwargs
     )
     models = []
     for state in states:
-        m = GNN(hidden_dim=hidden_dim)
+        m = GNN(**model_kwargs)
         m.load_state_dict(state)
         m.to(device)
         m.eval()
@@ -72,12 +76,14 @@ def fit_ensemble(
     return models, scaler
 
 
-def save_ensemble(path, states, scaler, hidden_dim=HIDDEN_DIM):
+def save_ensemble(path, states, scaler, model_kwargs=None):
+    if model_kwargs is None:
+        model_kwargs = default_model_kwargs()
     path.parent.mkdir(parents=True, exist_ok=True)
     torch.save(
         {
             "model_states": states,
-            "hidden_dim": hidden_dim,
+            "model_kwargs": model_kwargs,
             "scaler": scaler.state(),
         },
         path,
@@ -87,10 +93,10 @@ def save_ensemble(path, states, scaler, hidden_dim=HIDDEN_DIM):
 def load_ensemble(path, device):
     """Return (models, scaler) ready for inference."""
     ckpt = torch.load(path, map_location=device, weights_only=True)
-    hidden_dim = ckpt["hidden_dim"]
+    model_kwargs = ckpt["model_kwargs"]
     models = []
     for state in ckpt["model_states"]:
-        m = GNN(hidden_dim=hidden_dim)
+        m = GNN(**model_kwargs)
         m.load_state_dict(state)
         m.to(device)
         m.eval()

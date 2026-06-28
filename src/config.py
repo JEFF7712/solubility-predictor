@@ -69,6 +69,8 @@ ENSEMBLE_SIZE = 5
 SEED = 42
 EPOCHS = 100
 HIDDEN_DIM = 160
+NUM_LAYERS = 3
+DROPOUT = 0.0
 LEARNING_RATE = 0.00014067650554894532
 WEIGHT_DECAY = 0.000205739489609305
 BATCH_SIZE = 32
@@ -76,6 +78,12 @@ BATCH_SIZE = 32
 # Split fractions
 TRAIN_FRAC = 0.7
 VAL_FRAC = 0.15
+
+
+def default_model_kwargs() -> dict:
+    """Architecture kwargs for GNN(...). Persisted with the model so inference
+    reconstructs the exact same network."""
+    return {"hidden_dim": HIDDEN_DIM, "num_layers": NUM_LAYERS, "dropout": DROPOUT}
 
 
 def set_seed(seed: int = SEED) -> None:

@@ -4,10 +4,10 @@ import torch
 from .config import (
     ENSEMBLE_MODEL_PATH,
     ENSEMBLE_SIZE,
-    HIDDEN_DIM,
     SEED,
     TRAIN_FRAC,
     VAL_FRAC,
+    default_model_kwargs,
     get_device,
     set_seed,
 )
@@ -53,9 +53,10 @@ def main():
     val_std = scaler.transform_dataset(list(val_set))
 
     device = get_device()
-    print(f"Training {ENSEMBLE_SIZE}-model ensemble on {device}...")
-    states, _ = train_ensemble(train_std, val_std, device)
-    save_ensemble(ENSEMBLE_MODEL_PATH, states, scaler, hidden_dim=HIDDEN_DIM)
+    model_kwargs = default_model_kwargs()
+    print(f"Training {ENSEMBLE_SIZE}-model ensemble on {device} ({model_kwargs})...")
+    states, _ = train_ensemble(train_std, val_std, device, model_kwargs=model_kwargs)
+    save_ensemble(ENSEMBLE_MODEL_PATH, states, scaler, model_kwargs=model_kwargs)
 
     # Evaluate the saved ensemble on the held-out test split in logS space.
     models, loaded_scaler = load_ensemble(ENSEMBLE_MODEL_PATH, device)
