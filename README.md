@@ -60,6 +60,22 @@ Uses a **GINEConv** backbone with edge attribute support:
 
 ---
 
+## Development
+
+```bash
+nix develop ./config        # enter the dev shell (.venv with all deps)
+python -m src.train                   # train (saves best-val model to models/)
+python -m src.evaluate                # 5-fold random-split CV
+python -m src.evaluate_scaffold_split # 5-fold scaffold-split CV
+python -m src.hyperparameter_tune     # Optuna search
+python -m src.server                  # serve on :8080
+pytest                                # run tests
+```
+
+Shared configuration (paths, hyperparameters, dataset constants) lives in
+`src/config.py`; dataset loading/caching in `src/data.py`. The Delaney CSV is
+downloaded once and cached under `data/`.
+
 ## Other Notes
 
 - Supported atoms: C, N, O, F, S, Cl, Br, I.

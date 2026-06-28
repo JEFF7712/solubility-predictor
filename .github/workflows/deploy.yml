@@ -8,7 +8,31 @@ env:
   IMAGE_NAME: ghcr.io/jeff7712/solubility-gnn
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install torch (CPU)
+        run: pip install torch==2.5.1+cpu --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt -f https://data.pyg.org/whl/torch-2.5.1+cpu.html
+          pip install pytest
+
+      - name: Run tests
+        run: pytest
+
   build-and-push:
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
