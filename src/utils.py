@@ -2,7 +2,8 @@ import torch
 from rdkit import Chem
 from torch_geometric.data import Data
 
-allowed_atoms = ['C', 'N', 'O', 'F', 'S', 'Cl', 'Br', 'I']
+from .config import ALLOWED_ATOMS as allowed_atoms
+
 
 def get_atom_features(atom):
     # Get atom symbol as one-hot encoding
@@ -11,13 +12,13 @@ def get_atom_features(atom):
         symbol_one_hot[allowed_atoms.index(atom.GetSymbol())] = 1
 
     # Get hybridization as one-hot encoding
-    hybridization = [0, 0, 0] 
+    hybridization = [0, 0, 0]
     hyb = atom.GetHybridization()
-    if hyb == Chem.HybridizationType.SP: 
+    if hyb == Chem.HybridizationType.SP:
         hybridization[0] = 1
-    elif hyb == Chem.HybridizationType.SP2: 
+    elif hyb == Chem.HybridizationType.SP2:
         hybridization[1] = 1
-    elif hyb == Chem.HybridizationType.SP3: 
+    elif hyb == Chem.HybridizationType.SP3:
         hybridization[2] = 1
 
     # Get aromaticity
@@ -36,7 +37,16 @@ def get_atom_features(atom):
     mass = [atom.GetMass() / 100.0]
 
     # Combine all features into a single list
-    return symbol_one_hot + hybridization + aromatic + charge + num_hydrogens + degree + mass
+    return (
+        symbol_one_hot
+        + hybridization
+        + aromatic
+        + charge
+        + num_hydrogens
+        + degree
+        + mass
+    )
+
 
 def get_bond_features(bond):
     bt = bond.GetBondType()
@@ -44,14 +54,18 @@ def get_bond_features(bond):
         bt == Chem.rdchem.BondType.SINGLE,
         bt == Chem.rdchem.BondType.DOUBLE,
         bt == Chem.rdchem.BondType.TRIPLE,
-        bt == Chem.rdchem.BondType.AROMATIC
+        bt == Chem.rdchem.BondType.AROMATIC,
     ]
     return [float(f) for f in features]
+
 
 def smile_to_data(smile, y_value=None):
     # Convert SMILES to RDKit molecule
     mol = Chem.MolFromSmiles(smile)
-    if mol is None: return None
+    if mol is None or mol.GetNumAtoms() == 0:
+        # RDKit parses "" into a valid but empty mol; reject it so callers get a
+        # consistent None for any input that yields no atoms.
+        return None
 
     # Node Features
     x_list = []
