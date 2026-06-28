@@ -16,6 +16,7 @@ MODELS_DIR = BASE_DIR / "models"
 DATA_DIR = BASE_DIR / "data"
 STATIC_DIR = BASE_DIR / "static"
 MODEL_PATH = MODELS_DIR / "gnn_solubility.pth"
+ENSEMBLE_MODEL_PATH = MODELS_DIR / "gnn_ensemble.pth"
 DATA_CACHE_PATH = DATA_DIR / "delaney-processed.csv"
 
 # Dataset (Delaney / ESOL)
@@ -27,6 +28,14 @@ TARGET_COLUMN = "measured log solubility in mols per litre"
 ALLOWED_ATOMS = ["C", "N", "O", "F", "S", "Cl", "Br", "I"]
 NUM_NODE_FEATURES = len(ALLOWED_ATOMS) + 3 + 1 + 1 + 1 + 1 + 1  # = 16
 NUM_EDGE_FEATURES = 4
+# Node-feature column layout (see utils.get_atom_features):
+#   0-7  element one-hot     8-10 hybridization one-hot   11 aromatic (binary)
+#   12 formal charge   13 num Hs   14 degree   15 mass
+# Only the continuous columns are standardized; one-hot/binary pass through.
+CONTINUOUS_FEATURE_INDICES = [12, 13, 14, 15]
+
+# Ensemble
+ENSEMBLE_SIZE = 5
 
 # Training hyperparameters (best Optuna trial)
 SEED = 42
