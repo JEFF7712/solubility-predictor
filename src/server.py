@@ -8,6 +8,7 @@ from rdkit import Chem
 from rdkit.Chem import AllChem
 from .config import HIDDEN_DIM, MODEL_PATH, STATIC_DIR
 from .model import GNN
+from .postprocess import applicability_report, classify_solubility
 from .utils import smile_to_data
 import os
 import logging
@@ -121,11 +122,19 @@ async def predict(request: FastAPIRequest, req: Request):
                 logger.warning(f"Error generating mol block: {str(e)}")
                 mol_block = ""
 
+        domain = applicability_report(req.smiles)
+        if not domain["in_domain"]:
+            logger.warning(
+                f"Out-of-domain prediction for {req.smiles}: {domain['warnings']}"
+            )
+
         logger.info(f"Prediction successful for SMILES: {req.smiles}")
         return {
             "molecule": req.smiles,
             "logS": round(pred, 4),
-            "solubility": "Soluble" if pred > -2.5 else "Insoluble",
+            "solubility_class": classify_solubility(pred),
+            "in_domain": domain["in_domain"],
+            "warnings": domain["warnings"],
             "mol_block": mol_block,
         }
 

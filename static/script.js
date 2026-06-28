@@ -23,8 +23,12 @@ async function predict() {
         
         if (response.ok) {
             // Update Status Text
-            statusDiv.innerText = `${data.solubility} (Log(S): ${data.logS})`;
-            statusDiv.className = data.solubility === 'Soluble' ? 'soluble' : 'insoluble';
+            const solubleClasses = ['Highly soluble', 'Soluble'];
+            statusDiv.innerText = `${data.solubility_class} (logS: ${data.logS})`;
+            if (data.warnings && data.warnings.length) {
+                statusDiv.innerText += ` ⚠ ${data.warnings.join(' ')}`;
+            }
+            statusDiv.className = solubleClasses.includes(data.solubility_class) ? 'soluble' : 'insoluble';
 
             // Render 3D Molecule
             viewer.clear();
