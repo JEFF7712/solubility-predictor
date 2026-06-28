@@ -1,24 +1,14 @@
 from collections import defaultdict
 
 import numpy as np
-import torch
 from rdkit import Chem
 from rdkit.Chem.Scaffolds import MurckoScaffold
 from scipy.stats import pearsonr
 from sklearn.metrics import mean_squared_error, r2_score
-from torch_geometric.loader import DataLoader
 
-from .config import (
-    BATCH_SIZE,
-    EPOCHS,
-    HIDDEN_DIM,
-    LEARNING_RATE,
-    SEED,
-    WEIGHT_DECAY,
-    get_device,
-)
+from .config import SEED, get_device
 from .data import load_dataset
-from .model import GNN
+from .ensemble import ensemble_predict_dataset, fit_ensemble
 
 DEVICE = get_device()
 
@@ -92,39 +82,12 @@ if __name__ == "__main__":
         train_data = [data_list[i] for i in train_idx]
         test_data = [data_list[i] for i in test_idx]
 
-        train_loader = DataLoader(train_data, batch_size=BATCH_SIZE, shuffle=True)
-        test_loader = DataLoader(test_data, batch_size=BATCH_SIZE, shuffle=False)
+        # Hold out a validation slice of the training fold for early stopping.
+        val_cut = int(0.85 * len(train_data))
+        fit_data, val_data = train_data[:val_cut], train_data[val_cut:]
 
-        # Re-init model
-        model = GNN(hidden_dim=HIDDEN_DIM).to(DEVICE)
-        optimizer = torch.optim.AdamW(
-            model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY
-        )
-        loss_fn = torch.nn.MSELoss()
-
-        # Train
-        model.train()
-        for epoch in range(EPOCHS):
-            for batch in train_loader:
-                batch = batch.to(DEVICE)
-                optimizer.zero_grad()
-                out = model(batch)
-                loss = loss_fn(out.squeeze(), batch.y)
-                loss.backward()
-                optimizer.step()
-
-        # Evaluate
-        model.eval()
-        preds, actuals = [], []
-        with torch.no_grad():
-            for batch in test_loader:
-                batch = batch.to(DEVICE)
-                pred = model(batch)
-                preds.append(pred.view(-1).cpu().numpy())
-                actuals.append(batch.y.view(-1).cpu().numpy())
-
-        preds = np.concatenate(preds)
-        actuals = np.concatenate(actuals)
+        models, scaler = fit_ensemble(fit_data, val_data, DEVICE)
+        preds, actuals = ensemble_predict_dataset(models, scaler, test_data, DEVICE)
 
         rmse = np.sqrt(mean_squared_error(actuals, preds))
         r2 = r2_score(actuals, preds)
