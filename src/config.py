@@ -5,6 +5,7 @@ these constants were copy-pasted across train/evaluate/tune.
 """
 
 import random
+from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
@@ -17,12 +18,39 @@ DATA_DIR = BASE_DIR / "data"
 STATIC_DIR = BASE_DIR / "static"
 MODEL_PATH = MODELS_DIR / "gnn_solubility.pth"
 ENSEMBLE_MODEL_PATH = MODELS_DIR / "gnn_ensemble.pth"
-DATA_CACHE_PATH = DATA_DIR / "delaney-processed.csv"
 
-# Dataset (Delaney / ESOL)
-DATA_URL = "https://raw.githubusercontent.com/deepchem/deepchem/master/datasets/delaney-processed.csv"
-SMILES_COLUMN = "smiles"
-TARGET_COLUMN = "measured log solubility in mols per litre"
+
+@dataclass(frozen=True)
+class DatasetSpec:
+    """A solubility dataset: where to fetch it and which columns to read."""
+
+    name: str
+    url: str
+    cache_path: Path
+    smiles_column: str
+    target_column: str
+    sep: str = ","
+
+
+# Delaney / ESOL (~1.1k molecules) and AqSolDB (~10k curated). Both report logS
+# (log10 mol/L). AqSolDB is the default; it is ~7.7x larger after filtering to
+# the supported elements.
+DELANEY = DatasetSpec(
+    name="delaney",
+    url="https://raw.githubusercontent.com/deepchem/deepchem/master/datasets/delaney-processed.csv",
+    cache_path=DATA_DIR / "delaney-processed.csv",
+    smiles_column="smiles",
+    target_column="measured log solubility in mols per litre",
+)
+AQSOLDB = DatasetSpec(
+    name="aqsoldb",
+    url="https://dataverse.harvard.edu/api/access/datafile/3407241",
+    cache_path=DATA_DIR / "aqsoldb.tsv",
+    smiles_column="SMILES",
+    target_column="Solubility",
+    sep="\t",
+)
+DEFAULT_DATASET = AQSOLDB
 
 # Featurization
 ALLOWED_ATOMS = ["C", "N", "O", "F", "S", "Cl", "Br", "I"]
