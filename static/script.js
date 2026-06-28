@@ -24,7 +24,7 @@ async function predict() {
         if (response.ok) {
             // Update Status Text
             const solubleClasses = ['Highly soluble', 'Soluble'];
-            statusDiv.innerText = `${data.solubility_class} (logS: ${data.logS})`;
+            statusDiv.innerText = `${data.solubility_class} (logS: ${data.logS} ± ${data.logS_std})`;
             if (data.warnings && data.warnings.length) {
                 statusDiv.innerText += ` ⚠ ${data.warnings.join(' ')}`;
             }

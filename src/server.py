@@ -6,8 +6,8 @@ from pydantic import BaseModel, field_validator
 import torch
 from rdkit import Chem
 from rdkit.Chem import AllChem
-from .config import HIDDEN_DIM, MODEL_PATH, STATIC_DIR
-from .model import GNN
+from .config import ENSEMBLE_MODEL_PATH, STATIC_DIR
+from .ensemble import ensemble_predict, load_ensemble
 from .postprocess import applicability_report, classify_solubility
 from .utils import smile_to_data
 import os
@@ -21,7 +21,6 @@ from slowapi.errors import RateLimitExceeded
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-MODEL_PATH = str(MODEL_PATH)
 STATIC_DIR = str(STATIC_DIR)
 
 app = FastAPI(title="Solubility Predictor")
@@ -46,22 +45,17 @@ app.add_middleware(
 
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
-# Load Model
+# Load Ensemble
 device = torch.device("cpu")
-model = GNN(hidden_dim=HIDDEN_DIM)
 try:
-    model.load_state_dict(
-        torch.load(MODEL_PATH, map_location=device, weights_only=True)
-    )
-    logger.info("Model loaded successfully")
+    models, scaler = load_ensemble(ENSEMBLE_MODEL_PATH, device)
+    logger.info(f"Ensemble loaded successfully ({len(models)} members)")
 except FileNotFoundError:
-    logger.error(f"Model file not found at {MODEL_PATH}")
-    raise RuntimeError("Model file not found. Cannot start server.")
+    logger.error(f"Ensemble file not found at {ENSEMBLE_MODEL_PATH}")
+    raise RuntimeError("Ensemble file not found. Cannot start server.")
 except Exception as e:
-    logger.error(f"Error loading model: {str(e)}")
-    raise RuntimeError(f"Error loading model: {str(e)}")
-model.to(device)
-model.eval()
+    logger.error(f"Error loading ensemble: {str(e)}")
+    raise RuntimeError(f"Error loading ensemble: {str(e)}")
 
 
 class Request(BaseModel):
@@ -99,10 +93,7 @@ async def predict(request: FastAPIRequest, req: Request):
             raise HTTPException(400, "Molecule too large (max 500 atoms)")
 
         data.batch = torch.zeros(data.x.shape[0], dtype=torch.long)
-        data = data.to(device)
-
-        with torch.no_grad():
-            pred = model(data).item()
+        pred, pred_std = ensemble_predict(models, scaler, data, device)
 
         if not (-20 < pred < 20):
             logger.error(f"Prediction out of expected range: {pred}")
@@ -132,6 +123,7 @@ async def predict(request: FastAPIRequest, req: Request):
         return {
             "molecule": req.smiles,
             "logS": round(pred, 4),
+            "logS_std": round(pred_std, 4),
             "solubility_class": classify_solubility(pred),
             "in_domain": domain["in_domain"],
             "warnings": domain["warnings"],
