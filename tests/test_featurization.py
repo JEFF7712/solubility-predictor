@@ -20,6 +20,15 @@ def test_invalid_smiles_returns_none():
     assert smile_to_data("") is None
 
 
+def test_bondless_molecule_has_correctly_shaped_edges():
+    # A single-atom species has no bonds; edge tensors must still be
+    # [2, 0] / [0, NUM_EDGE_FEATURES] so the edge encoder accepts them.
+    data = smile_to_data("C")  # methane: one heavy atom, no bonds
+    assert data is not None
+    assert data.edge_index.shape == (2, 0)
+    assert data.edge_attr.shape == (0, NUM_EDGE_FEATURES)
+
+
 def test_target_attached_when_provided():
     data = smile_to_data("CCO", y_value=-0.77)
     assert data.y.item() == pytest.approx(-0.77)

@@ -3,6 +3,7 @@ from rdkit import Chem
 from torch_geometric.data import Data
 
 from .config import ALLOWED_ATOMS as allowed_atoms
+from .config import NUM_EDGE_FEATURES
 
 
 def get_atom_features(atom):
@@ -90,8 +91,15 @@ def smile_to_data(smile, y_value=None):
         dst_list.append(start)
         attr_list.append(feat)
 
-    edge_index = torch.tensor([src_list, dst_list], dtype=torch.long)
-    edge_attr = torch.tensor(attr_list, dtype=torch.float)
+    # Bondless molecules (e.g. a single-atom species) must still yield
+    # correctly-shaped empty edge tensors, otherwise an empty attr_list collapses
+    # to shape [0] instead of [0, NUM_EDGE_FEATURES] and breaks the edge encoder.
+    if attr_list:
+        edge_index = torch.tensor([src_list, dst_list], dtype=torch.long)
+        edge_attr = torch.tensor(attr_list, dtype=torch.float)
+    else:
+        edge_index = torch.zeros((2, 0), dtype=torch.long)
+        edge_attr = torch.zeros((0, NUM_EDGE_FEATURES), dtype=torch.float)
 
     # Create Data object
     if y_value is not None:
