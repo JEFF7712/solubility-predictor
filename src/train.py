@@ -1,24 +1,29 @@
-import pandas as pd
-import random
-import numpy as np
+import copy
+
 import torch
 from torch_geometric.loader import DataLoader
+
+from .config import (
+    BATCH_SIZE,
+    EPOCHS,
+    HIDDEN_DIM,
+    LEARNING_RATE,
+    MODEL_PATH,
+    SEED,
+    TRAIN_FRAC,
+    VAL_FRAC,
+    WEIGHT_DECAY,
+    get_device,
+    set_seed,
+)
+from .data import load_dataset
 from .model import GNN
-from .utils import smile_to_data
 
-# Hyperparameters
-EPOCHS = 100
-SEED = 42
-HIDDEN_DIM = 160
-LEARNING_RATE = 0.00014067650554894532
-WEIGHT_DECAY = 0.000205739489609305
-BATCH_SIZE = 32
+# Early stopping: stop if val loss has not improved for this many epochs.
+EARLY_STOPPING_PATIENCE = 20
 
-# Set random seeds
-torch.manual_seed(SEED)
-torch.cuda.manual_seed_all(SEED)
-np.random.seed(SEED)
-random.seed(SEED)
+set_seed(SEED)
+
 
 def evaluate(model, loader, device, loss_fn):
     model.eval()
@@ -27,27 +32,18 @@ def evaluate(model, loader, device, loss_fn):
         for batch in loader:
             batch = batch.to(device)
             out = model(batch)
-            loss = loss_fn(out.squeeze(), batch.y)
+            loss = loss_fn(out.view(-1), batch.y)
             total_loss += loss.item()
     return total_loss / max(len(loader), 1)
 
 
-if __name__ == "__main__":
-    # Load Delaney solubility dataset
-    DATA_URL = "https://raw.githubusercontent.com/deepchem/deepchem/master/datasets/delaney-processed.csv"
-    df = pd.read_csv(DATA_URL)
-
-    # Extract SMILES strings and solubility values
-    data_list = []
-    for _, row in df.iterrows():
-        data = smile_to_data(row['smiles'], row['measured log solubility in mols per litre'])
-        if data is not None:
-            data_list.append(data)
+def main():
+    data_list, _ = load_dataset()
 
     # Train/val/test split
     num_samples = len(data_list)
-    train_size = int(0.7 * num_samples)
-    val_size = int(0.15 * num_samples)
+    train_size = int(TRAIN_FRAC * num_samples)
+    val_size = int(VAL_FRAC * num_samples)
     test_size = num_samples - train_size - val_size
     generator = torch.Generator().manual_seed(SEED)
     train_set, val_set, test_set = torch.utils.data.random_split(
@@ -59,13 +55,20 @@ if __name__ == "__main__":
     test_loader = DataLoader(test_set, batch_size=BATCH_SIZE, shuffle=False)
 
     # Training setup
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = get_device()
     model = GNN(hidden_dim=HIDDEN_DIM).to(device)
-    optimizer = torch.optim.AdamW(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
+    optimizer = torch.optim.AdamW(
+        model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY
+    )
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer, mode='min', factor=0.5, patience=5, min_lr=0.00001
+        optimizer, mode="min", factor=0.5, patience=5, min_lr=0.00001
     )
     loss_fn = torch.nn.MSELoss()
+
+    best_val_loss = float("inf")
+    best_state = copy.deepcopy(model.state_dict())
+    best_epoch = 0
+    epochs_without_improvement = 0
 
     for epoch in range(EPOCHS):
         model.train()
@@ -82,14 +85,42 @@ if __name__ == "__main__":
         train_loss = total_loss / len(train_loader)
         val_loss = evaluate(model, val_loader, device, loss_fn)
         scheduler.step(val_loss)
-        current_lr = optimizer.param_groups[0]['lr']
+        current_lr = optimizer.param_groups[0]["lr"]
+
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
+            best_state = copy.deepcopy(model.state_dict())
+            best_epoch = epoch + 1
+            epochs_without_improvement = 0
+        else:
+            epochs_without_improvement += 1
 
         if (epoch + 1) % 10 == 0:
-            print(f"Epoch {epoch + 1} | Train: {train_loss:.4f} | Val: {val_loss:.4f} | LR: {current_lr:.6f}")
+            print(
+                f"Epoch {epoch + 1} | Train: {train_loss:.4f} | "
+                f"Val: {val_loss:.4f} | LR: {current_lr:.6f}"
+            )
 
-    # Final eval
+        if epochs_without_improvement >= EARLY_STOPPING_PATIENCE:
+            print(
+                f"Early stopping at epoch {epoch + 1} (no improvement in "
+                f"{EARLY_STOPPING_PATIENCE} epochs)"
+            )
+            break
+
+    # Restore and persist the best model, not the last-epoch one.
+    model.load_state_dict(best_state)
     final_val = evaluate(model, val_loader, device, loss_fn)
     final_test = evaluate(model, test_loader, device, loss_fn)
-    print(f"Validation Loss: {final_val:.4f} | Test Loss: {final_test:.4f}")
+    print(
+        f"Best epoch: {best_epoch} | Validation Loss: {final_val:.4f} | "
+        f"Test Loss: {final_test:.4f}"
+    )
 
-    torch.save(model.state_dict(), "models/gnn_solubility.pth")
+    MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
+    torch.save(best_state, MODEL_PATH)
+    print(f"Saved best model to {MODEL_PATH}")
+
+
+if __name__ == "__main__":
+    main()
