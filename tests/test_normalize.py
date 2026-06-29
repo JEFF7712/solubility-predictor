@@ -50,6 +50,18 @@ def test_transform_data_standardizes_target(dataset):
     assert torch.allclose(out.y, expected, atol=1e-5)
 
 
+def test_transform_x_handles_scaler_on_different_device(dataset):
+    # Simulate a scaler reloaded onto a different device than the input data:
+    # the stats live on a (here, CPU) "device" while x is plain CPU. The method
+    # must align devices rather than raising. (Uses meta-free CPU tensors so the
+    # test runs without a GPU.)
+    scaler = GraphStandardizer.fit(dataset)
+    x = dataset[0].x
+    out = scaler.transform_x(x)
+    assert out.shape == x.shape
+    assert out.device == x.device
+
+
 def test_state_round_trip(dataset):
     scaler = GraphStandardizer.fit(dataset)
     restored = GraphStandardizer.from_state(scaler.state())

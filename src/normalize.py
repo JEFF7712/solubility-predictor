@@ -38,7 +38,11 @@ class GraphStandardizer:
         return cls(feature_mean, feature_std, y.mean().item(), y_std)
 
     def transform_x(self, x):
-        return (x - self.feature_mean) / self.feature_std
+        # Operate on x's device: a scaler reloaded from a GPU checkpoint holds
+        # CUDA tensors, while freshly-featurized input is on CPU.
+        mean = self.feature_mean.to(x.device)
+        std = self.feature_std.to(x.device)
+        return (x - mean) / std
 
     def standardize_y(self, y):
         return (y - self.y_mean) / self.y_std
