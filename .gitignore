@@ -1,5 +1,6 @@
 .direnv
 .venv
+.venv-gpu
 __pycache__/
 .pytest_cache/
 data/
