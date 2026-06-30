@@ -31,7 +31,7 @@ async function predict() {
         const data = await response.json();
 
         if (response.ok) {
-            statusDiv.innerText = `${data.solubility_class}   logS ${data.logS} ± ${data.logS_std}`;
+            statusDiv.innerText = `${data.solubility_class}   logS = ${data.logS} ± ${data.logS_std}`;
             statusDiv.className = solubilityTier(data.solubility_class);
 
             if (data.warnings && data.warnings.length) {
