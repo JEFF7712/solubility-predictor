@@ -17,6 +17,14 @@
             <button id="analyzeBtn">→</button>
         </div>
 
+        <div class="examples-row">
+            <span class="example-label">try</span>
+            <button class="example" data-smiles="CC(=O)Oc1ccccc1C(=O)O">aspirin</button>
+            <button class="example" data-smiles="Cn1cnc2c1c(=O)n(C)c(=O)n2C">caffeine</button>
+            <button class="example" data-smiles="OCC1OC(O)C(O)C(O)C1O">glucose</button>
+            <button class="example" data-smiles="c1ccc2ccccc2c1">naphthalene</button>
+        </div>
+
         <div class="helper-links-row">
             <a href="https://github.com/JEFF7712/solubility-predictor" target="_blank" class="helper-link">
                 <svg class="github-icon" viewBox="0 0 24 24" fill="currentColor">
@@ -28,6 +36,7 @@
             </a>
         </div>
         <div id="statusText">Ready</div>
+        <div id="warningText"></div>
 
         <div id="viewer"></div>
     </div>

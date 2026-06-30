@@ -71,7 +71,53 @@ button:hover {
 }
 
 .soluble { color: #28a745 !important; }
+.slightly { color: #d6a000 !important; }
 .insoluble { color: #dc3545 !important; }
+
+#warningText {
+    min-height: 16px;
+    margin-bottom: 20px;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: #b8860b;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.examples-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.example-label {
+    font-size: 0.7rem;
+    color: #444;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.example {
+    background: transparent;
+    border: 1px solid #333;
+    color: #888;
+    padding: 4px 10px;
+    font-family: inherit;
+    font-size: 0.75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.example:hover {
+    border-color: #555;
+    color: #ccc;
+    background: transparent;
+}
 
 #viewer {
     width: 100%;
