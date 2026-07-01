@@ -75,6 +75,11 @@ LEARNING_RATE = 0.0002288073628058266
 WEIGHT_DECAY = 0.00021821392099950144
 BATCH_SIZE = 128
 
+# Loss: "mse" or "huber". Huber (smooth-L1) down-weights outliers, which can help
+# on AqSolDB's noisier, wide-range labels. Delta is in standardized-target units.
+LOSS = "huber"
+HUBER_DELTA = 1.0
+
 # Split fractions
 TRAIN_FRAC = 0.7
 VAL_FRAC = 0.15

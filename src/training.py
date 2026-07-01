@@ -14,13 +14,21 @@ from torch_geometric.loader import DataLoader
 from .config import (
     BATCH_SIZE,
     EPOCHS,
+    HUBER_DELTA,
     LEARNING_RATE,
+    LOSS,
     WEIGHT_DECAY,
     default_model_kwargs,
 )
 from .model import GNN
 
 EARLY_STOPPING_PATIENCE = 20
+
+
+def make_loss_fn():
+    if LOSS == "huber":
+        return torch.nn.HuberLoss(delta=HUBER_DELTA)
+    return torch.nn.MSELoss()
 
 
 def _eval_loss(model, loader, device, loss_fn):
@@ -60,7 +68,7 @@ def train_single_model(
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, mode="min", factor=0.5, patience=5, min_lr=0.00001
     )
-    loss_fn = torch.nn.MSELoss()
+    loss_fn = make_loss_fn()
 
     train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False)
