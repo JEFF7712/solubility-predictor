@@ -55,29 +55,22 @@ Uses a **GINEConv** backbone with edge attribute support:
 - Architecture re-tuned for the larger dataset via a 50-trial GPU Optuna search (hidden_dim 160 → 256, small dropout, larger batch).
 - **Key changes**: A much more general model. The headline RMSE is higher than the ESOL iterations not because the model regressed but because AqSolDB is a substantially harder, noisier benchmark (logS -13 to +2, aggregated from 9 sources). The numbers are competitive with published AqSolDB GNN results (~0.9-1.1 random-split RMSE).
 
+### Iteration 7: Robust Loss
+- MSE → Huber (smooth-L1) loss to down-weight AqSolDB's noisy label outliers.
+- **Key changes**: Random-split CV RMSE 0.9059 → 0.8990, neutral on the scaffold split. (Fusing RDKit global descriptors was also tested and did not help, the tuned GNN already captures that signal, so it was not adopted.)
+
 ## Model Performance Metrics
 
-Metrics below are for the production 5-model deep ensemble (Iteration 6) on
+Metrics below are for the production 5-model deep ensemble (Iteration 7) on
 AqSolDB. **They are not comparable to iterations 1-5**, which used the smaller,
 easier ESOL dataset. Each fold reserves 15% of its training data as a validation
 slice for early stopping.
 
-**5-Fold Cross-Validation** (Random Split):
-- **Average RMSE**: 0.9059 ± 0.0052
-- **Average R²**: 0.8472 (explains 84.72% of variance)
-- **Folds**: RMSE = 0.9101 / 0.9114 / 0.8970 / 0.9074 / 0.9038
+- **5-Fold Cross-Validation (Random Split)**: RMSE 0.8990 ± 0.0182, R² 0.8493
+- **5-Fold Scaffold Split CV** (more rigorous, prevents leakage): RMSE 0.9340 ± 0.0981, R² 0.8031
 
-**5-Fold Scaffold Split Cross-Validation** (More Rigorous - Prevents Data Leakage):
-- **Average RMSE**: 0.9353 ± 0.0981
-- **Average R²**: 0.8027 (explains 80.27% of variance)
-- **Fold 1**: Train 6482 | Test 2180 → RMSE = 0.9357, R² = 0.8291
-- **Fold 2**: Train 7007 | Test 1655 → RMSE = 0.7582, R² = 0.7374
-- **Fold 3**: Train 7053 | Test 1609 → RMSE = 1.0577, R² = 0.8103
-- **Fold 4**: Train 7053 | Test 1609 → RMSE = 0.9756, R² = 0.7923
-- **Fold 5**: Train 7053 | Test 1609 → RMSE = 0.9491, R² = 0.8444
-
-Spot checks on well-known molecules (logS): naphthalene -4.05 (exp -3.61),
-benzene -1.77 (exp -1.64), caffeine -0.95 (exp -0.96), aspirin -1.74 (exp -2.10).
+Spot checks on well-known molecules (logS): naphthalene -3.94 (exp -3.61),
+benzene -1.79 (exp -1.64), caffeine -0.97 (exp -0.96), glucose 0.57 (exp 0.74).
 
 ---
 
