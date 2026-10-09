@@ -1,6 +1,6 @@
 services:
   solubility-api:
-    image: ghcr.io/jeff7712/solubility-gnn:${TAG:-latest}
+    image: registry.rupan.dev/apps/solubility-gnn:${TAG:-latest}
     build:
       context: .
       dockerfile: config/Dockerfile
