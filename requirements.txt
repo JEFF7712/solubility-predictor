@@ -5,7 +5,7 @@ pydantic==2.14.0
 rdkit==2026.9.1
 numpy==2.5.3
 pandas==3.0.6
-torch-geometric==2.8.0.post1
+torch-geometric==2.8.1
 torch-scatter==2.1.2+pt27cpu
 torch-sparse==0.6.18+pt27cpu
 slowapi==0.1.10
