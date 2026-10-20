@@ -1,5 +1,5 @@
 torch==2.7.0+cpu
-fastapi==0.125.0
+fastapi==0.151.0
 uvicorn==0.54.0
 pydantic==2.14.0
 rdkit==2026.9.1
