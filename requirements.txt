@@ -1,7 +1,7 @@
 torch==2.7.0+cpu
 fastapi==0.125.0
 uvicorn==0.54.0
-pydantic==2.14.0
+pydantic==2.14.2
 rdkit==2026.9.1
 numpy==2.5.3
 pandas==3.0.6
